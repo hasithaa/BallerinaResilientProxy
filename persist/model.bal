@@ -4,6 +4,7 @@ type Message record {|
     readonly string id;
     string url;
     string replyUrl;
+    string replyMethod;
     string state;
     string nodeId;
     int createdAt;
