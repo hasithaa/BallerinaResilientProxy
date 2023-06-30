@@ -37,7 +37,7 @@ listener http:Listener httpListener = new (listenPort);
 const X_URL = "X-Url";
 const X_REPLY = "X-Reply";
 const X_REPLY_METHOD = "X-ReplyMethod";
-const X_ACTIVITY = "X-Activity";
+const X_TASK_ID = "X-TaskId";
 
 service on httpListener {
 
@@ -291,6 +291,7 @@ isolated function sendReply(string msgId, db:Response res, string replyUrl, stri
     do {
         http:Client ep = check new (replyUrl);
         http:Request request = check createHttpRequest(res, replyMethod);
+        request.setHeader(X_TASK_ID, msgId);
         http:Response|error response = ep->execute(replyMethod, "", request);
         if response is error {
             _ = check db->/messages/[msgId].put({state: REPLY_FAILED});
@@ -338,10 +339,10 @@ type NetworkMessage record {
     string contentType;
 };
 
-type MessageWithResponse record {|
-    *db:Message;
-    db:Response response;
-|};
+// type MessageWithResponse record {|
+//     *db:Message;
+//     db:Response response;
+// |};
 
 isolated function createHttpRequest(NetworkMessage msg, string method) returns http:Request|error {
     map<string> reqHeaders = check (check value:fromJsonString(check string:fromBytes(msg.headers))).cloneWithType();
