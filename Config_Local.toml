@@ -1,0 +1,12 @@
+nodeId = "node1"
+retentionPeriod = 60
+
+[ResilientProxy.db]
+host = "localhost"
+port = 3306
+user = "root"
+password = "root1234"
+database = "workflow"
+
+[ballerina.log]
+level = "DEBUG"

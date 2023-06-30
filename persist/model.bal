@@ -12,7 +12,8 @@ type Message record {|
     byte[] payload;
     string contentType;
     string method;
-    Response? response;
+    Response? response; 
+    // TODO : Clarify, Foreign key creation seems not developer friendly. 
 |};
 
 type Response record {|
