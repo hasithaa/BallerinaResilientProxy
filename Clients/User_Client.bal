@@ -1,6 +1,7 @@
 import ballerina/http;
-import ballerina/task;
 import ballerina/log;
+import ballerina/task;
+import ballerina/time;
 
 const X_TASK_ID = "X-TaskId";
 
@@ -20,7 +21,7 @@ isolated class ClientJob {
 
     private final map<string> & readonly headers = {
         "X-Url": "http://localhost:8080/user",
-        "X-Reply": "http://localhost:8081/result",
+        "X-Reply": "http://localhost:8081/callback/result",
         "X-ReplyMethod": "POST"
     };
 
@@ -28,8 +29,9 @@ isolated class ClientJob {
 
     public function execute() {
         do {
-            http:Client ep = check new ("http://localhost:9090");
-            json payload = {"name": "John Doe"};
+            http:Client ep = check new ("http://localhost:9090", cache = {enabled: false});
+            // JBug. HTTP Caching client does not support headers. It drops headers.
+            json payload = {"name": "John Doe", time: time:utcNow()[0]};
             http:Response res = check ep->/submit.post(payload, self.headers);
             log:printInfo("Submitted task: " + check res.getHeader(X_TASK_ID));
         } on fail {

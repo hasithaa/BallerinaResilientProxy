@@ -52,7 +52,10 @@ service on httpListener {
                 select [header, check req.getHeader(header)];
 
             if !headersMap.hasKey(X_URL) || !headersMap.hasKey(X_REPLY) || !headersMap.hasKey(X_REPLY_METHOD) {
-                string message = string `Required headers not found. Required headers: "${X_URL}", "${X_REPLY}", "${X_REPLY_METHOD}".`;
+                string message = string `Required headers not found:` +
+                (!headersMap.hasKey(X_URL) ? string `'${X_URL}' ` : "") +
+                (!headersMap.hasKey(X_REPLY) ? string `'${X_REPLY}' ` : "") +
+                (!headersMap.hasKey(X_REPLY_METHOD) ? string `'${X_REPLY_METHOD}'"` : "");
                 string reference = logHttpClientError(message);
                 http:BadRequest badRequest = {body: {message, reference}};
                 return badRequest;
