@@ -34,10 +34,10 @@ final db:Client db = check new ();
 
 listener http:Listener httpListener = new (listenPort);
 
-const X_URL = "X-Url";
-const X_REPLY = "X-Reply";
-const X_REPLY_METHOD = "X-ReplyMethod";
-const X_TASK_ID = "X-TaskId";
+final string X_URL = "X-Url".toLowerAscii();
+final string X_REPLY = "X-Reply".toLowerAscii();
+final string X_REPLY_METHOD = "X-ReplyMethod".toLowerAscii();
+final string X_TASK_ID = "X-TaskId".toLowerAscii();
 
 service on httpListener {
 
@@ -49,7 +49,7 @@ service on httpListener {
         // TODO : Handle Authentication and Authorization.
         do {
             map<string> headersMap = map from var header in req.getHeaderNames()
-                select [header, check req.getHeader(header)];
+                select [header, (check req.getHeader(header)).toLowerAscii()];
 
             if !headersMap.hasKey(X_URL) || !headersMap.hasKey(X_REPLY) || !headersMap.hasKey(X_REPLY_METHOD) {
                 string message = string `Required headers not found:` +
